@@ -44,12 +44,6 @@ class PlayState extends FlxState
 		add(mFloor);
 		add(mWalls);
 		add(presents);
-		add(playerTeams[0]);
-		add(playerTeams[1]);
-		add(playerAdditions);
-		add(PlayState.snowBalls[0]);
-		add(PlayState.snowBalls[1]);
-		add(mFloor2);
 
 		var pointsT1:FlxText = new FlxText(5);
 		pointsT1.setFormat(null, 18, 0x3F5CFF);
@@ -69,31 +63,43 @@ class PlayState extends FlxState
 
 	private function countDown():Void
 	{
-		this.active = false;
+		this.active = true;
 
 		var overlay:FlxSprite = new FlxSprite();
 		overlay.makeGraphic(FlxG.width, FlxG.height, 0x66000000);
 		add(overlay);
 
 		var countDown:Int = 3;
-		var countDownTxt:FlxText = new FlxText(0, 0, FlxG.width);
+		var countDownTxt:FlxText = new FlxText(0, FlxG.height / 2 - 100, FlxG.width);
 		countDownTxt.setFormat(null, 16, 0xFFFFFF, FlxTextAlign.CENTER);
 		countDownTxt.text = countDown+"";
 		add(countDownTxt);
 
-		FlxTween.tween(countDownTxt.scale, { x:3.5, y:3.5 }, 1, { type:FlxTween.PINGPONG }).onComplete = function(t:FlxTween):Void
+		var index:Int = 0;
+		FlxTween.tween(countDownTxt.scale, { x:3.5, y:3.5 }, 0.5, { type:FlxTween.PINGPONG }).onComplete = function(t:FlxTween):Void
 		{
-			countDown -= 1;
-			if(countDown == 0) {
-				remove(overlay);
-				this.active = true;
-				FlxTween.tween(countDown, {y: -100}, 2, {type:FlxTween.ONESHOT}).onComplete = function(t:FlxTween):Void
-				{
-					remove(countDownTxt);
+			if(++index % 2 == 0) {
+				countDown -= 1;
+				if(countDown == 0) {
+					remove(overlay);
+
+					add(playerTeams[0]);
+					add(playerTeams[1]);
+					add(playerAdditions);
+					add(PlayState.snowBalls[0]);
+					add(PlayState.snowBalls[1]);
+					add(mFloor2);
+					
+					countDownTxt.text = "LOS";
+					countDownTxt.scale.x = countDownTxt.scale.y = 4;
+					FlxTween.tween(countDownTxt, {y: -100}, 2, {type:FlxTween.ONESHOT}).onComplete = function(t:FlxTween):Void
+					{
+						remove(countDownTxt);
+					}
+					t.cancel();
+				} else {
+					countDownTxt.text = countDown+"";
 				}
-				t.cancel();
-			} else {
-				countDownTxt.text = countDown+"";
 			}
 		}
 	}
