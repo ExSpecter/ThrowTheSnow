@@ -1,4 +1,4 @@
-package;
+package tts.objects;
 
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -6,11 +6,13 @@ import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 
+import tts.entities.*;
+
 class SnowballHUD extends FlxSprite
 {
-    private var player:Player;
+    private var player:Entity;
 
-    public function new(player:Player)
+    public function new(player:Entity)
     {
         super(player.x + 5, player.y - 24);
         this.player = player;

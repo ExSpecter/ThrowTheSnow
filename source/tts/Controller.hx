@@ -1,4 +1,4 @@
-package;
+package tts;
 
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;

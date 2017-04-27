@@ -1,10 +1,12 @@
-package ;
+package tts;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+
+import tts.settings.*;
 
 class GameOver extends FlxSubState
 {

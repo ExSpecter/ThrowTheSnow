@@ -1,4 +1,4 @@
-package;
+package tts;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -8,6 +8,8 @@ import flixel.text.FlxText;
 import flixel.group.FlxGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+
+import tts.settings.*;
 
 class MenuState extends FlxState
 {
@@ -120,7 +122,7 @@ class MenuState extends FlxState
 	{
 		for(gp in FlxG.gamepads.getActiveGamepads()) {
 			if(gp.justPressed.START) {
-				if(Reg.playerCount >= 2)
+				if(Reg.playerCount >= 1)
 					startGame = true;
 			} else if(gp.justReleased.A) {
 				var isAlreadyConnected = false;

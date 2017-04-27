@@ -1,10 +1,13 @@
-package;
+package tts.objects;
 
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
+
+import tts.entities.*;
+import tts.settings.*;
 
 using flixel.util.FlxSpriteUtil;
 

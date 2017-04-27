@@ -1,4 +1,4 @@
-package;
+package tts.settings;
 
 class Reg
 {

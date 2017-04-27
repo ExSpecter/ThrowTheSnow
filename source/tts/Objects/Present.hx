@@ -1,10 +1,12 @@
-package;
+package tts.objects;
 
 import flixel.FlxSprite;
 
+import tts.entities.Entity;
+
 class Present extends FlxSprite
 {
-    public var player:Player;
+    public var player:Entity;
 
     public function new(?X:Float=0, ?Y:Float=0)
     {

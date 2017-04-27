@@ -1,4 +1,4 @@
-package;
+package tts;
 
 import flixel.FlxSprite;
 import flixel.util.FlxColor;

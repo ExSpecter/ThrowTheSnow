@@ -1,4 +1,4 @@
-package;
+package tts;
 
 import flixel.FlxGame;
 import openfl.Lib;

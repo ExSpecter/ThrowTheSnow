@@ -1,10 +1,12 @@
-package;
+package tts.objects;
 
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
+
+import tts.settings.*;
 
 class Snowball extends FlxSprite
 {

@@ -1,4 +1,4 @@
-package;
+package tts;
 
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
@@ -11,6 +11,10 @@ import flixel.tile.FlxTile;
 import flixel.FlxObject;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+
+import tts.settings.*;
+import tts.entities.*;
+import tts.objects.*;
 
 class PlayState extends FlxState
 {
@@ -111,7 +115,7 @@ class PlayState extends FlxState
 		var player:Player = new Player(i, Reg.c[i], team, X, Y);
 		add(Reg.c[i]);
 		playerTeams[team].add(player);
-		playerAdditions.add(player.playerAdditions);
+		playerAdditions.add(player.hud);
 	}
 
 	private function initMap():Void

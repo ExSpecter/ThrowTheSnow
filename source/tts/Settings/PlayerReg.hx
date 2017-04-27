@@ -1,4 +1,4 @@
-package;
+package tts.settings;
 
 class PlayerReg {
     public static inline var maxSpeed:Float = 200;
