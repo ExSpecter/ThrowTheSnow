@@ -36,7 +36,7 @@ class Entity extends FlxSprite
     // Freezing
     public var freeze:Float = 0;
     private var freezeTimer:Float = 0;
-    private var isFreezed:Bool = false;
+    public var isFreezed:Bool = false;
 
     // Present
     public var hasPresent:Bool = false;
@@ -78,6 +78,7 @@ class Entity extends FlxSprite
     // Active Actions
     private function makeSnowBall():Void
     {
+        //trace("OnIce: " + onIce);
         if(snowBallCount < PlayerReg.maxSnowball && !makingSnowball && !onIce && !hasPresent) {
             makingSnowball = true;
             isIdle = false;
@@ -85,12 +86,11 @@ class Entity extends FlxSprite
         }
     }
 
-    private function throwSnowBall(throwDir:FlxPoint):Void
+    private function throwSnowBall(throwDir:FlxPoint, throwSpeed:Int):Void
     {
         if(snowBallCount > 0 && !hasPresent) {
             PlayState.snowBalls[team].add(new Snowball(this.team, throwDir, 
-                this.x + (this.width / 2), this.y + (this.height / 2), throwArrow.throwSpeed));
-            throwArrow.throwSpeed = PlayerReg.minThrowSpeed;
+                this.x + (this.width / 2), this.y + (this.height / 2), throwSpeed));
             snowBallCount--;
             // TODO block animation while throw animation
             if(dir == 0) animation.play("tU", true);
@@ -118,7 +118,6 @@ class Entity extends FlxSprite
 
             animation.play("idleD");
         }
-        touchingPresent = null;
     }
 
     // Passive Actions

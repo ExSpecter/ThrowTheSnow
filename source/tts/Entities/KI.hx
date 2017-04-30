@@ -7,29 +7,37 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
+import flixel.math.FlxVelocity;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxPath;
 
 import tts.objects.*;
 import tts.settings.*;
 
 class KI extends Entity
 {
-    private var controller:Controller;    
+    private var controller:Controller; 
 
-    public function new(id:Int, team:Int, ?X:Float=0, ?Y:Float=0)
+    private var player:Entity;
+    private var walls:FlxTilemap;
+
+    private var basePoint:FlxPoint;
+
+    public var present:Present;
+
+    private var snowAreas = new Array<FlxPoint>();
+
+    public function new(id:Int, team:Int, player:Entity, walls:FlxTilemap, ?X:Float=0, ?Y:Float=0)
     {
         super(id, X, Y);
         this.id = id;
         this.team = team;
-        this.controller = controller;
+        this.player = player;
+        this.walls = walls;
+        
+        this.path = new FlxPath();
 
-        if(id % 4 == 0)
-            loadGraphic(AssetPaths.charWT1__png, true, 48, 48);
-        else if(id % 4 == 1)
-            loadGraphic(AssetPaths.charMT2__png, true, 48, 48);
-        else if(id % 4 == 2)
-            loadGraphic(AssetPaths.charMT1__png, true, 48, 48);
-        else if(id % 4 == 3)
-            loadGraphic(AssetPaths.charWT2__png, true, 48, 48);
+        loadGraphic(AssetPaths.charMT2__png, true, 48, 48);
 
         setSize(34, 32);
         offset.set(7, 16);
@@ -70,67 +78,87 @@ class KI extends Entity
         animation.add("pIdleL", [36], 1, false);
         animation.add("pL", [37, 36, 38, 36], 6, false);
 
-        throwArrow = new ThrowArrow(controller, this);
-        hud.add(throwArrow);
+        thisPos = new FlxPoint(0, 0);
+        playerPos = new FlxPoint(0, 0);
+        presentPos = new FlxPoint(0, 0);
+
+        basePoint = new FlxPoint(816, 432);
+
+        snowAreas[0] = new FlxPoint(204, 92);
+        snowAreas[1] = new FlxPoint(456, 284);
+        snowAreas[2] = new FlxPoint(90, 384);
+        snowAreas[3] = new FlxPoint(815, 284);
     }
 
     override public function update(elapsed:Float):Void
     {
+        // this.path.cancel();
         if(freeze > 0) warmUp();
         if(!isFreezed) {
-            if(controller.buttonA) makeSnowBall();
+            if(snowBallCount < 1 && !player.isFreezed) makeSnowBall();
             if(!makingSnowball) {
-                if(controller.buttonX) pickUpPresent();
+                if(touchingPresent != null) pickUpPresent();
                 movement();
-                if(controller.rightTrigger && controller.aiming) throwSnowBall(controller.throwDir);
+                if(getVectorLength(new FlxPoint(Math.abs(player.x - this.x), Math.abs(player.y - this.y))) < 300 && !player.isFreezed)
+                     throwSnowBall(new FlxPoint(player.x - this.x, player.y - this.y), 600);
             }
         }
+
+        touchingPresent = null;
+        onIce = false;
         super.update(elapsed);
     }
 
+    var pathPoints:Array<FlxPoint>;
+    var thisPos:FlxPoint;
+    var playerPos:FlxPoint;
+    var presentPos:FlxPoint;
     private function movement():Void
     {
-        if(controller.moving) {
-            var maxSpeed:Float = PlayerReg.maxSpeed;
-            if(hasPresent) maxSpeed = PlayerReg.presentMaxSpeed;
-            
-            speed = maxSpeed;
-            speed -= ((freeze / PlayerReg.freezeLimit) * speed);
-            var currentDir:FlxPoint = new FlxPoint(controller.movDir.x, controller.movDir.y);
-
-            setLookDir(currentDir);
-
-            currentDir.scale(speed / getVectorLength(currentDir));
-            if(onIce) {
-                currentDir.scale(PlayerReg.iceInertia);
-                lastDir.addPoint(currentDir);
-                var vLength:Float = getVectorLength(lastDir);
-                if(vLength > maxSpeed) {
-                    lastDir.scale(speed / vLength);
-                }
-            } else {
-                lastDir = currentDir;
+        thisPos.set(this.x  + this.width / 2, this.y + this.height / 2);
+        if(!hasPresent) {
+            if(player.isFreezed) pathPoints = walls.findPath(thisPos, presentPos.set(present.x + present.width / 2, 
+                                                                present.y + present.height / 2));
+            else {
+                if(snowBallCount > 0) pathPoints = walls.findPath(thisPos, playerPos.set(player.x + player.width / 2, player.y + player.height / 2));
+                else pathPoints = pathToSnowArea();
             }
-            velocity.set(lastDir.x, lastDir.y);
         } else {
-            if(onIce && getVectorLength(lastDir) > 1) {
-                    lastDir.scale(1 - PlayerReg.iceInertia);
-                    velocity.set(lastDir.x, lastDir.y);
-            } else {
-                lastDir.set(0, 0);
-            }
+            pathPoints = walls.findPath(thisPos, basePoint);
+            if(pathPoints[1] == null) pickUpPresent();
         }
 
-        if(controller.aiming && snowBallCount > 0) setLookDir(new FlxPoint(controller.throwDir.x, controller.throwDir.y));
+        // this.path.start(pathPoints, PlayerReg.maxSpeed - 100, FlxPath.FORWARD, false, true);
+        
+        if(pathPoints != null && pathPoints[1] != null) {
+            pathPoints[1].add(this.width / 2, this.height / 2);
+            if(hasPresent) FlxVelocity.moveTowardsPoint(this, pathPoints[1], PlayerReg.presentMaxSpeed - 35);
+            else FlxVelocity.moveTowardsPoint(this, pathPoints[1], PlayerReg.maxSpeed - 35);
+        }
+
+        setLookDir(this.velocity);
+
         playWalkAnimation();
-        onIce = false;
     }
 
-        // Animation 
+    private function pathToSnowArea():Array<FlxPoint>
+    {
+        var distance:Float = thisPos.distanceTo(snowAreas[0]);
+        var point:FlxPoint = new FlxPoint(0, 0);
+
+        for(snowPoint in snowAreas) {
+            if(thisPos.distanceTo(snowPoint) < distance) point.set(snowPoint.x , snowPoint.y);
+        }
+        if(player.hasPresent) point.set(snowAreas[0].x, snowAreas[0].y);
+
+        return walls.findPath(thisPos, point);
+    }
+
+    // Animation 
     private function playWalkAnimation():Void
     {
         if(!hasPresent) {
-            if(controller.moving) {
+            if(velocity.y != 0 && velocity.x != 0) {
                 if(touching == FlxObject.NONE && !isFreezed)  {
                     if(dir == 0) animation.play("u");
                     else if(dir == 1) animation.play("r");
@@ -147,7 +175,7 @@ class KI extends Entity
                 }
             }
         } else {
-            if(controller.moving) {
+            if(velocity.y != 0 && velocity.x != 0) {
                 if(touching == FlxObject.NONE && !isFreezed) {
                     if(dir == 0) animation.play("pU");
                     else if(dir == 1) animation.play("pR");

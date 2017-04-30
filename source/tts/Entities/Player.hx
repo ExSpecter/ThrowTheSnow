@@ -82,9 +82,13 @@ class Player extends Entity
             if(!makingSnowball) {
                 if(controller.buttonX) pickUpPresent();
                 movement();
-                if(controller.rightTrigger && controller.aiming) throwSnowBall(controller.throwDir);
+                if(controller.rightTrigger && controller.aiming) pThrowSnowBall(controller.throwDir);
             }
         }
+        
+        touchingPresent = null;
+        onIce = false;
+        
         super.update(elapsed);
     }
 
@@ -123,10 +127,9 @@ class Player extends Entity
 
         if(controller.aiming && snowBallCount > 0) setLookDir(new FlxPoint(controller.throwDir.x, controller.throwDir.y));
         playWalkAnimation();
-        onIce = false;
     }
 
-        // Animation 
+    // Animation 
     private function playWalkAnimation():Void
     {
         if(!hasPresent) {
@@ -164,5 +167,11 @@ class Player extends Entity
                 }
             }
         }
+    }
+
+    function pThrowSnowBall(throwDir:FlxPoint):Void
+    {
+        throwSnowBall(throwDir, throwArrow.throwSpeed);
+        throwArrow.throwSpeed = PlayerReg.minThrowSpeed;
     }
 }

@@ -23,7 +23,10 @@ class PlayState extends FlxState
 	private var mFloor2:FlxTilemap;
 	private var mWalls:FlxTilemap;
 
-	private var playerTeams = new Array<FlxTypedGroup<Player>>();
+	private var player1:Entity;
+	private var enemy:KI;
+
+	private var playerTeams = new Array<FlxTypedGroup<Entity>>();
 	private var playerAdditions:FlxGroup;
 	public static var snowBalls = new Array<FlxTypedGroup<Snowball>>();
 	private var presents:FlxGroup;
@@ -31,11 +34,13 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
+		FlxG.debugger.drawDebug;
+
 		FlxG.mouse.visible = false;
 		Reg.gameOver = false;
 
-		playerTeams[0] = new FlxTypedGroup<Player>();
-		playerTeams[1] = new FlxTypedGroup<Player>();
+		playerTeams[0] = new FlxTypedGroup<Entity>();
+		playerTeams[1] = new FlxTypedGroup<Entity>();
 		playerAdditions = new FlxGroup();
 
 		PlayState.snowBalls[0] = new FlxTypedGroup<Snowball>();
@@ -113,6 +118,7 @@ class PlayState extends FlxState
 		var team:Int = i % 2;
 		Reg.c[i].exists = true;
 		var player:Player = new Player(i, Reg.c[i], team, X, Y);
+		if(i == 0) player1 = player;
 		add(Reg.c[i]);
 		playerTeams[team].add(player);
 		playerAdditions.add(player.hud);
@@ -130,11 +136,11 @@ class PlayState extends FlxState
 			mFloor.setTileProperties(i, FlxObject.NONE);
 			mFloor2.setTileProperties(i, FlxObject.NONE);
 			if(i == 13) 
-				mFloor.setTileProperties(i, FlxObject.NONE, playerOnIce, Player);
+				mFloor.setTileProperties(i, FlxObject.NONE, playerOnIce, Entity);
 			if(i > 0)
 				mWalls.setTileProperties(i, FlxObject.ANY, snowBallWallCollide, Snowball);
 		}
-
+ 
 		mapFile.loadEntities(placeEntities, "entities");
 	}
 
@@ -149,6 +155,9 @@ class PlayState extends FlxState
 		} else if(entityName == "Player2" && Reg.playerCount > addedPlayer) {
 			createPlayer(addedPlayer, x, y);
 			addedPlayer++;
+		} else if(entityName == "Player2" && Reg.playerCount == 1) {
+			enemy = new KI(1, 1, player1, mWalls, x, y);
+			playerTeams[1].add(enemy);
 		} else if(entityName == "Player3" && Reg.playerCount > addedPlayer) {
 			createPlayer(addedPlayer, x, y);
 			addedPlayer++;
@@ -156,17 +165,20 @@ class PlayState extends FlxState
 			createPlayer(addedPlayer, x, y);
 			addedPlayer++;
 		} else if(entityName == "Present") {
-			presents.add(new Present(x, y));
+			var pres:Present = new Present(x, y);
+			presents.add(pres);
+			if(Reg.playerCount == 1) enemy.present = pres;
 		} else if(entityName == "EndZoneT1") {
 			endZones.add(new EndZone(0, x, y));
 		} else if(entityName == "EndZoneT2") {
 			endZones.add(new EndZone(1, x, y));
 		}
+
 	}
 
-	private function playerOnIce(TILE:FlxObject, PLAYER:FlxObject):Void
+	private function playerOnIce(TILE:FlxObject, ENTITY:FlxObject):Void
 	{
-		var player:Player = cast PLAYER;
+		var player:Entity = cast ENTITY;
 		player.onIce = true;
 	}
 
@@ -199,13 +211,13 @@ class PlayState extends FlxState
 		FlxG.overlap(endZones, presents, presentInEndZone);
 	}
 
-	private function snowBallHitsPlayer(player:Player, snowBall:Snowball):Void 
+	private function snowBallHitsPlayer(player:Entity, snowBall:Snowball):Void 
 	{
 		snowBall.kill();
 		player.hit();
 	}
 
-	private function playerTouchPresent(player:Player, present:Present):Void
+	private function playerTouchPresent(player:Entity, present:Present):Void
 	{
 		player.playerTouchesPresent(present);
 	}
