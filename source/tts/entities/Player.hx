@@ -82,7 +82,7 @@ class Player extends Entity
             if(!makingSnowball) {
                 if(controller.buttonX) pickUpPresent();
                 movement();
-                if(controller.rightTrigger && controller.aiming) pThrowSnowBall(controller.throwDir);
+                if((controller.rightTrigger || controller.leftTrigger) && controller.aiming) pThrowSnowBall(controller.throwDir);
             }
         }
         
