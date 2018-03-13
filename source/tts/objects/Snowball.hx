@@ -22,7 +22,9 @@ class Snowball extends FlxSprite
         setSize(12,12);
         offset.set(4,4);
         loadGraphic(AssetPaths.snowball__png, true, 16, 16);
-        scale.set(PlayerReg.maxThrowSpeed / speed, PlayerReg.maxThrowSpeed / speed);
+        
+        //scale.set(PlayerReg.maxThrowSpeed / speed, PlayerReg.maxThrowSpeed / speed);
+        scale.set(1.5, 1.5);
 
         this.setPosition(X - this.width / 2, Y - this.height / 2);
         drag.x = drag.y = 1800;
