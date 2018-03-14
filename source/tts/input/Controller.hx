@@ -20,7 +20,7 @@ class Controller extends Input
     override public function update(elapsed:Float):Void
     {
         moving = aiming = false;
-        rightTrigger = leftTrigger = buttonA = buttonX = start = back = false;
+        buttonThrow = buttonMakeSnowball = buttonTakePresent = start = back = false;
 
         movDir.set(0, 0);
         throwDir.set(0, 0);
@@ -38,10 +38,9 @@ class Controller extends Input
             aiming = true;
         }
 
-        if(pad.justPressed.RIGHT_SHOULDER) rightTrigger = true;
-        if(pad.justPressed.LEFT_SHOULDER) leftTrigger = true;
-        if(pad.justPressed.A) buttonA = true;
-        if(pad.justPressed.X) buttonX = true;
+        if(pad.justPressed.RIGHT_SHOULDER || pad.justPressed.LEFT_SHOULDER) buttonThrow = true;
+        if(pad.justPressed.A) buttonMakeSnowball = true;
+        if(pad.justPressed.X) buttonTakePresent = true;
         if(pad.justPressed.START) start = true;
         if(pad.justPressed.BACK) back = true;
     }

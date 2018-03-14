@@ -79,11 +79,11 @@ class Player extends Entity
     {
         if(freeze > 0) warmUp();
         if(!isFreezed) {
-            if(input.buttonA) makeSnowBall();
+            if(input.buttonMakeSnowball) makeSnowBall();
             if(!makingSnowball) {
-                if(input.buttonX) pickUpPresent();
+                if(input.buttonTakePresent) pickUpPresent();
                 movement();
-                if((input.rightTrigger || input.leftTrigger) && input.aiming) pThrowSnowBall(input.getThrowDir(this.getPosition()));
+                if((input.buttonThrow) && input.aiming) pThrowSnowBall(input.getThrowDir(this.getPosition()));
             }
         }
         

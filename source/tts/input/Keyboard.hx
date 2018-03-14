@@ -19,7 +19,7 @@ class Keyboard extends Input
     override public function update(elapsed:Float):Void
     {
         moving = aiming = false;
-        rightTrigger = leftTrigger = buttonA = buttonX = start = back = false;
+        buttonThrow = buttonMakeSnowball = buttonTakePresent = start = back = false;
 
         movDir.set(0, 0);
         throwDir.set(0, 0);
@@ -37,11 +37,11 @@ class Keyboard extends Input
         if(FlxG.mouse.pressed) aiming = true;
 
         if(FlxG.mouse.justReleased) {
-            leftTrigger = rightTrigger = true;
+            buttonThrow = true;
             aiming = true;
         }
-        if(FlxG.keys.justPressed.R) buttonA = true;
-        if(FlxG.keys.justPressed.E) buttonX = true;
+        if(FlxG.keys.justPressed.R) buttonMakeSnowball = true;
+        if(FlxG.keys.justPressed.E) buttonTakePresent = true;
 
         if(FlxG.keys.justPressed.ENTER) start = true;
         if(FlxG.keys.justPressed.N) back = true;

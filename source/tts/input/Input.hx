@@ -13,10 +13,9 @@ class Input extends FlxGroup
     public var aiming:Bool = false;
     public var throwDir:FlxPoint;
 
-    public var rightTrigger:Bool = false;
-    public var leftTrigger:Bool = false;
-    public var buttonA:Bool = false;
-    public var buttonX:Bool = false;
+    public var buttonThrow:Bool = false;
+    public var buttonMakeSnowball:Bool = false;
+    public var buttonTakePresent:Bool = false;
 
     public var start:Bool = false;
     public var back:Bool = false;
