@@ -10,17 +10,18 @@ import flixel.group.FlxGroup;
 
 import tts.objects.*;
 import tts.settings.*;
+import tts.input.*;
 
 class Player extends Entity
 {
-    private var controller:Controller;    
+    private var input:Input;    
 
-    public function new(id:Int, controller:Controller, team:Int, ?X:Float=0, ?Y:Float=0)
+    public function new(id:Int, input:Input, team:Int, ?X:Float=0, ?Y:Float=0)
     {
         super(id, X, Y);
         this.id = id;
         this.team = team;
-        this.controller = controller;
+        this.input = input;
 
         if(id % 4 == 0)
             loadGraphic(AssetPaths.charWT1__png, true, 48, 48);
@@ -70,7 +71,7 @@ class Player extends Entity
         animation.add("pIdleL", [36], 1, false);
         animation.add("pL", [37, 36, 38, 36], 6, false);
 
-        throwArrow = new ThrowArrow(controller, this);
+        throwArrow = new ThrowArrow(input, this);
         hud.add(throwArrow);
     }
 
@@ -78,11 +79,11 @@ class Player extends Entity
     {
         if(freeze > 0) warmUp();
         if(!isFreezed) {
-            if(controller.buttonA) makeSnowBall();
+            if(input.buttonA) makeSnowBall();
             if(!makingSnowball) {
-                if(controller.buttonX) pickUpPresent();
+                if(input.buttonX) pickUpPresent();
                 movement();
-                if((controller.rightTrigger || controller.leftTrigger) && controller.aiming) pThrowSnowBall(controller.throwDir);
+                if((input.rightTrigger || input.leftTrigger) && input.aiming) pThrowSnowBall(input.getThrowDir(this.getPosition()));
             }
         }
         
@@ -94,13 +95,13 @@ class Player extends Entity
 
     private function movement():Void
     {
-        if(controller.moving) {
+        if(input.moving) {
             var maxSpeed:Float = PlayerReg.maxSpeed;
             if(hasPresent) maxSpeed = PlayerReg.presentMaxSpeed;
             
             speed = maxSpeed;
             speed -= ((freeze / PlayerReg.freezeLimit) * speed);
-            var currentDir:FlxPoint = new FlxPoint(controller.movDir.x, controller.movDir.y);
+            var currentDir:FlxPoint = new FlxPoint(input.movDir.x, input.movDir.y);
 
             setLookDir(currentDir);
 
@@ -125,7 +126,7 @@ class Player extends Entity
             }
         }
 
-        if(controller.aiming && snowBallCount > 0) setLookDir(new FlxPoint(controller.throwDir.x, controller.throwDir.y));
+        if(input.aiming && snowBallCount > 0) setLookDir(input.getThrowDir(this.getPosition()));
         playWalkAnimation();
     }
 
@@ -133,7 +134,7 @@ class Player extends Entity
     private function playWalkAnimation():Void
     {
         if(!hasPresent) {
-            if(controller.moving) {
+            if(input.moving) {
                 if(touching == FlxObject.NONE && !isFreezed)  {
                     if(dir == 0) animation.play("u");
                     else if(dir == 1) animation.play("r");
@@ -150,7 +151,7 @@ class Player extends Entity
                 }
             }
         } else {
-            if(controller.moving) {
+            if(input.moving) {
                 if(touching == FlxObject.NONE && !isFreezed) {
                     if(dir == 0) animation.play("pU");
                     else if(dir == 1) animation.play("pR");

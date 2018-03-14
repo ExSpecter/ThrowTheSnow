@@ -1,14 +1,12 @@
-package tts;
+package tts.input;
 
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.math.FlxPoint;
 
-class Controller extends FlxGroup
+class Controller extends Input
 {
-    public var pad:FlxGamepad;
-
     public function new(?PAD:FlxGamepad) 
     {
         pad = PAD;
@@ -19,21 +17,10 @@ class Controller extends FlxGroup
         super();
     }
 
-    public var moving:Bool = false;
-    public var movDir:FlxPoint;
-
-    public var aiming:Bool = false;
-    public var throwDir:FlxPoint;
-
-    public var rightTrigger:Bool = false;
-    public var leftTrigger:Bool = false;
-    public var buttonA:Bool = false;
-    public var buttonX:Bool = false;
-
     override public function update(elapsed:Float):Void
     {
         moving = aiming = false;
-        rightTrigger = leftTrigger = buttonA = buttonX = false;
+        rightTrigger = leftTrigger = buttonA = buttonX = start = back = false;
 
         movDir.set(0, 0);
         throwDir.set(0, 0);
@@ -55,6 +42,13 @@ class Controller extends FlxGroup
         if(pad.justPressed.LEFT_SHOULDER) leftTrigger = true;
         if(pad.justPressed.A) buttonA = true;
         if(pad.justPressed.X) buttonX = true;
+        if(pad.justPressed.START) start = true;
+        if(pad.justPressed.BACK) back = true;
+    }
+
+    override public function getThrowDir(point:FlxPoint):FlxPoint 
+    {
+        return throwDir;
     }
 
     public static function setAllControllerExisting():Void

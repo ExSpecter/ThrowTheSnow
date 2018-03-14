@@ -8,24 +8,22 @@ import flixel.math.FlxPoint;
 
 import tts.entities.*;
 import tts.settings.*;
+import tts.input.*;
 
 using flixel.util.FlxSpriteUtil;
 
 class ThrowArrow extends FlxSprite
 {
-    private var controller:Controller;
+    private var input:Input;
     private var player:Player;
     private var playerDistance:Float = 14;
     public var throwSpeed:Int = PlayerReg.minThrowSpeed;
 
-    private var angleVector:FlxPoint;
-
-    public function new(controller:Controller, player:Player)
+    public function new(input:Input, player:Player)
     {
         super(0, 0);
-        this.controller = controller;
+        this.input = input;
         this.player = player;
-        angleVector = new FlxPoint(0, 0);
 
         //calcPosition();
         
@@ -40,11 +38,10 @@ class ThrowArrow extends FlxSprite
 
     override public function update(elapsed:Float):Void
     {
-        if(controller.aiming && player.snowBallCount > 0 && !player.makingSnowball && player.freeze < PlayerReg.freezeLimit && !player.hasPresent) {
-            this.angleVector.set(controller.throwDir.x, controller.throwDir.y);
+        if(input.aiming && player.snowBallCount > 0 && !player.makingSnowball && player.freeze < PlayerReg.freezeLimit && !player.hasPresent) {
             //angle = radToDeg(Math.atan2(angleVector.y, angleVector.x));//angleVector.angleBetween(new FlxPoint(1, 0)) * 2;
 
-            drawThrowLine(angleVector);
+            drawThrowLine(input.getThrowDir(player.getPosition()));
 
             this.visible = true;
             throwSpeed += 5;

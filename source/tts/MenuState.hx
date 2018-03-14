@@ -10,6 +10,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 
 import tts.settings.*;
+import tts.input.*;
 
 class MenuState extends FlxState
 {
@@ -25,6 +26,7 @@ class MenuState extends FlxState
 		Reg.pointsT1 = 0;
 		Reg.pointsT2 = 0;
 		Reg.playerCount = 0;
+		Reg.keyboardUsed = false;
 
 		var background:FlxSprite = new FlxSprite(FlxG.width, FlxG.height, AssetPaths.Map2__png);
 		background.screenCenter();
@@ -133,8 +135,7 @@ class MenuState extends FlxState
 					}
 				}
 				if(!isAlreadyConnected) {
-					Reg.c[Reg.playerCount] = new Controller(gp);
-					Reg.playerCount++;
+					Reg.c[Reg.playerCount++] = new Controller(gp);
 					infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
 					FlxG.camera.flash(0xffffffff, 0.4);
 					break;
@@ -151,6 +152,17 @@ class MenuState extends FlxState
 					add(playInformation);
 					shownState = 1;
 				}
+			}
+		}
+
+		if(FlxG.keys.justPressed.ENTER) {
+			if(Reg.keyboardUsed) {
+				startGame = true;
+			} else {
+				Reg.c[Reg.playerCount++] = new Keyboard();
+				Reg.keyboardUsed = true;
+				infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
+				FlxG.camera.flash(0xffffffff, 0.4);
 			}
 		}
 	}

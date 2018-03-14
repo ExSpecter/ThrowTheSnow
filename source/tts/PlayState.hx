@@ -1,20 +1,23 @@
 package tts;
 
 import flixel.FlxState;
-import flixel.addons.editors.ogmo.FlxOgmoLoader;
-import flixel.tile.FlxTilemap;
-import flixel.text.FlxText;
-import flixel.FlxG;
-import flixel.group.FlxGroup;
-import flixel.FlxSprite;
-import flixel.tile.FlxTile;
 import flixel.FlxObject;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.tile.FlxTilemap;
+import flixel.tile.FlxTile;
+import flixel.text.FlxText;
+import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.util.FlxColor;
+import flixel.addons.editors.ogmo.FlxOgmoLoader;
 
 import tts.settings.*;
 import tts.entities.*;
 import tts.objects.*;
+
+using flixel.util.FlxSpriteUtil;
 
 class PlayState extends FlxState
 {
@@ -36,7 +39,15 @@ class PlayState extends FlxState
 	{
 		FlxG.debugger.drawDebug;
 
-		FlxG.mouse.visible = false;
+		if(Reg.keyboardUsed) {
+			var sprite = new FlxSprite();
+			sprite.makeGraphic(12, 12, FlxColor.TRANSPARENT);
+			sprite.drawCircle(-1, -1, -1, FlxColor.BLACK);
+
+			// Load the sprite's graphic to the cursor
+			FlxG.mouse.load(sprite.pixels);
+		}
+		FlxG.mouse.visible = Reg.keyboardUsed;
 		Reg.gameOver = false;
 
 		playerTeams[0] = new FlxTypedGroup<Entity>();

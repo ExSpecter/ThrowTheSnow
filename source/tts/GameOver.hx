@@ -7,6 +7,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 
 import tts.settings.*;
+import tts.input.*;
 
 class GameOver extends FlxSubState
 {
@@ -42,9 +43,9 @@ class GameOver extends FlxSubState
 		infoP2.text = "Press Back to Play Again with other Teams";
 		add(infoP2);
 		
-        for(controller in Reg.c) {
-			controller.exists = true;
-            add(controller);
+        for(input in Reg.c) {
+			input.exists = true;
+            add(input);
         }
 	}
 	
@@ -54,10 +55,10 @@ class GameOver extends FlxSubState
 	{
 		if(FlxG.keys.justPressed.SPACE) FlxG.fullscreen = !FlxG.fullscreen;
 
-		for(controller in Reg.c) {
-            if (controller.pad.justPressed.START) {
+		for(input in Reg.c) {
+            if (input.start) {
                 close();
-            } else if(controller.pad.justPressed.BACK) {
+            } else if(input.back) {
 				replay = false;
 				close();
 			}
@@ -70,7 +71,7 @@ class GameOver extends FlxSubState
 		if(replay) {
 			FlxG.switchState(new PlayState());
 		} else {
-			Reg.c = new Array<Controller>();
+			Reg.c = new Array<Input>();
 			FlxG.switchState(new MenuState());
 		}
 	}
