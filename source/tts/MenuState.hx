@@ -23,27 +23,34 @@ class MenuState extends FlxState
 	override public function create():Void
 	{
 		FlxG.mouse.visible = false;
-		Reg.pointsT1 = 0;
-		Reg.pointsT2 = 0;
-		Reg.playerCount = 0;
-		Reg.keyboardUsed = false;
+		
+		Reg.init();
 
+		setBackground();
+		setMenuOverlay();
+		
+		playInformation = new FlxGroup();
+		initPlayInformation();	
+		add(playInformation);
+
+		gameMechanics = new FlxGroup();
+		initGameMechanics();	
+
+		super.create();
+	}
+
+	private function setBackground():Void
+	{
 		var background:FlxSprite = new FlxSprite(FlxG.width, FlxG.height, AssetPaths.Map2__png);
 		background.screenCenter();
 		add(background);
+	}
 
+	private function setMenuOverlay():Void
+	{
 		var overlay:FlxSprite = new FlxSprite();
 		overlay.makeGraphic(FlxG.width, FlxG.height, 0x66000000);
 		add(overlay);
-
-		playInformation = new FlxGroup();
-		gameMechanics = new FlxGroup();
-
-		initPlayInformation();	
-		initGameMechanics();	
-
-		add(playInformation);
-		super.create();
 	}
 
 	private function initPlayInformation():Void
@@ -126,32 +133,15 @@ class MenuState extends FlxState
 			if(gp.justPressed.START) {
 				if(Reg.playerCount >= 1)
 					startGame = true;
-			} else if(gp.justReleased.A) {
-				var isAlreadyConnected = false;
-				for(controller in Reg.c) {
-					if(gp == controller.pad) {
-						isAlreadyConnected = true;
-						break;
-					}
-				}
-				if(!isAlreadyConnected) {
-					Reg.c[Reg.playerCount++] = new Controller(gp);
-					infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
-					FlxG.camera.flash(0xffffffff, 0.4);
+			} else if(gp.justReleased.A) {				
+				if(!controllerIsAlreadyConnected(gp)) {
+					addControllerPlayer();
 					break;
 				}
 			} else if(gp.justReleased.X) {
-				if(shownState == 1) {
-					remove(playInformation);
-					add(gameMechanics);
-					shownState = 2;
-				}
+				if(shownState == 1) showGameMechanics();
 			} else if(gp.justReleased.B) {
-				if(shownState == 2) {
-					remove(gameMechanics);
-					add(playInformation);
-					shownState = 1;
-				}
+				if(shownState == 2) showPlayInformation();
 			}
 		}
 
@@ -159,12 +149,50 @@ class MenuState extends FlxState
 			if(Reg.keyboardUsed) {
 				startGame = true;
 			} else {
-				Reg.c[Reg.playerCount++] = new Keyboard();
-				Reg.keyboardUsed = true;
-				infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
-				FlxG.camera.flash(0xffffffff, 0.4);
+				addKeyboardPlayer();
 			}
 		}
+	}
+
+	private function addKeyboardPlayer():Void
+	{
+		Reg.c[Reg.playerCount++] = new Keyboard();
+		Reg.keyboardUsed = true;
+		infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
+		FlxG.camera.flash(0xffffffff, 0.4);
+	}
+
+	private function addControllerPlayer():Void
+	{
+		Reg.c[Reg.playerCount++] = new Controller(gp);
+		infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
+		FlxG.camera.flash(0xffffffff, 0.4);
+	}
+
+	private function controllerIsAlreadyConnected(pad:FlxGamepad):Bool
+	{
+		var retval:Bool = false;
+		for(controller in Reg.c) {
+			if(pad == controller.pad) {
+				retval = true;
+				break;
+			}
+		}
+		return retval;
+	}
+
+	private function showGameMechanics():Void
+	{
+		remove(playInformation);
+		add(gameMechanics);
+		shownState = 2;
+	}
+
+	private function showPlayInformation():Void
+	{
+		remove(gameMechanics);
+		add(playInformation);
+		shownState = 1;
 	}
 
 	private function goAhead():Void

@@ -71,7 +71,7 @@ class GameOver extends FlxSubState
 		if(replay) {
 			FlxG.switchState(new PlayState());
 		} else {
-			Reg.c = new Array<Input>();
+			Reg.clearController();
 			FlxG.switchState(new MenuState());
 		}
 	}
