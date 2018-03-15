@@ -8,6 +8,8 @@ class PlayerReg {
     public static inline var freezeLimit:Float = 200;   // Freeze Limit when you get freezed
     public static inline var freezeSpeed:Float = 125;   // How fast you freeze when you get hit
     public static inline var warmUpSpeed:Float = 0.7;   // How fast you warm Up
+    public static inline var freezeColorR:Float = 30;
+    public static inline var freezeColorG:Float = 74;
 
     public static inline var freezeTimer:Float = 120;   // How long you are freezed
     public static inline var freezeAfter:Float = 50;    // Freeze Value after you where freezed completly

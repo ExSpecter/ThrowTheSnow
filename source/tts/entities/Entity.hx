@@ -53,6 +53,8 @@ class Entity extends FlxSprite
 
         hud = new FlxGroup();
         hud.add(new SnowballHUD(this));
+
+        this.color = 0xFFFFFF;
     }
 
     private function setLookDir(vector:FlxPoint):Void 
@@ -142,6 +144,7 @@ class Entity extends FlxSprite
         }
     }
 
+    private var freezeColor:FlxColor = new FlxColor(0);
     private function warmUp():Void
     {
         if(freeze >= PlayerReg.freezeLimit && freezeTimer <= PlayerReg.freezeTimer && !isFreezed) {
@@ -166,6 +169,10 @@ class Entity extends FlxSprite
             if(freeze < 0) freeze = 0;
             setColorTransform(1 - (freeze / PlayerReg.freezeLimit), 1 - ((freeze / PlayerReg.freezeLimit) / 4));
         }
+
+        if(freeze > 0) {
+            this.color.setRGBFloat(PlayerReg.freezeColorR + (PlayerReg.freezeLimit - freeze), PlayerReg.freezeColorG + ((PlayerReg.freezeLimit - freeze)), 255);
+        } else this.color.setRGBFloat(255, 255, 255);
     }
 
     public function playerTouchesPresent(present:Present):Void
