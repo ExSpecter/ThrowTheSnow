@@ -88,7 +88,7 @@ class Player extends Entity
             if(!makingSnowball) {
                 if(input.buttonTakePresent) pickUpPresent();
                 movement();
-                if((input.buttonThrow) && input.aiming) throwSnowBall(input.getThrowDir(this.getPosition()));
+                if((input.buttonThrow) && input.aiming) throwSnowBall(input.getThrowDir(this.getPosition()), throwArrow.throwSpeed);
             }
         }
         
@@ -175,9 +175,9 @@ class Player extends Entity
         }
     }
 
-    override function throwSnowBall(throwDir:FlxPoint):Void
+    override function throwSnowBall(throwDir:FlxPoint, throwSpeed:Int):Void
     {
-        super.throwSnowBall(throwDir, throwArrow.throwSpeed);
+        super.throwSnowBall(throwDir, throwSpeed);
         throwArrow.throwSpeed = PlayerReg.minThrowSpeed;
     }
 }
