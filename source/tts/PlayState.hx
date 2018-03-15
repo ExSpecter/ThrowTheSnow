@@ -38,7 +38,24 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		FlxG.debugger.drawDebug;
+		Reg.gameOver = false;
 
+		showCursorIfKeyboardIsInput();
+		initGameVariables();
+
+		initMap();
+
+		add(mFloor);
+		add(mWalls);
+		add(presents);
+
+		countDown();
+
+		super.create();
+	}
+
+	private function showCursorIfKeyboardIsInput():Void
+	{
 		if(Reg.keyboardUsed) {
 			var sprite = new FlxSprite();
 			sprite.makeGraphic(12, 12, FlxColor.TRANSPARENT);
@@ -48,8 +65,9 @@ class PlayState extends FlxState
 			FlxG.mouse.load(sprite.pixels);
 		}
 		FlxG.mouse.visible = Reg.keyboardUsed;
-		Reg.gameOver = false;
-
+	}
+	public function initGameVariables():Void
+	{
 		playerTeams[0] = new FlxTypedGroup<Entity>();
 		playerTeams[1] = new FlxTypedGroup<Entity>();
 		playerAdditions = new FlxGroup();
@@ -58,13 +76,9 @@ class PlayState extends FlxState
 		PlayState.snowBalls[1] = new FlxTypedGroup<Snowball>();
 		presents = new FlxGroup();
 		endZones = new FlxGroup();
-
-		initMap();
-
-		add(mFloor);
-		add(mWalls);
-		add(presents);
-
+	}
+	public function addScoreDisplay():Void
+	{
 		var pointsT1:FlxText = new FlxText(5);
 		pointsT1.setFormat(null, 18, 0x3F5CFF);
 		pointsT1.text = "" + Reg.pointsT1;
@@ -75,10 +89,7 @@ class PlayState extends FlxState
 		pointsT2.text = "" + Reg.pointsT2;
 		pointsT2.setPosition(FlxG.width - pointsT2.width - 5);
 		add(pointsT2);
-
-		countDown();
-
-		super.create();
+		
 	}
 
 	private function countDown():Void
@@ -154,28 +165,31 @@ class PlayState extends FlxState
  
 		mapFile.loadEntities(placeEntities, "entities");
 	}
+	private function playerOnIce(TILE:FlxObject, ENTITY:FlxObject):Void
+	{
+		var player:Entity = cast ENTITY;
+		player.onIce = true;
+	}
+	private function snowBallWallCollide(TILE:FlxObject, SNOWBALL:FlxObject):Void
+	{
+		var snowBall:Snowball = cast SNOWBALL;
+		snowBall.kill();
+	}
 
 	private var addedPlayer:Int = 0;
 	private function placeEntities(entityName:String, entityData:Xml):Void
 	{
 		var x:Int = Std.parseInt(entityData.get("x"));
 		var y:Int = Std.parseInt(entityData.get("y"));
-		if(entityName == "Player1" && Reg.playerCount > addedPlayer) {
-			createPlayer(addedPlayer, x, y);
-			addedPlayer++;
-		} else if(entityName == "Player2" && Reg.playerCount > addedPlayer) {
-			createPlayer(addedPlayer, x, y);
-			addedPlayer++;
-		} else if(entityName == "Player2" && Reg.playerCount == 1) {
+		// TODO Refactor
+		if(entityName == "Player1" && Reg.playerCount > addedPlayer) createPlayer(addedPlayer++, x, y);
+		else if(entityName == "Player2" && Reg.playerCount > addedPlayer) createPlayer(addedPlayer++, x, y);
+		else if(entityName == "Player2" && Reg.playerCount == 1) {
 			enemy = new KI(1, 1, player1, mWalls, x, y);
 			playerTeams[1].add(enemy);
-		} else if(entityName == "Player3" && Reg.playerCount > addedPlayer) {
-			createPlayer(addedPlayer, x, y);
-			addedPlayer++;
-		} else if(entityName == "Player4" && Reg.playerCount > addedPlayer) {
-			createPlayer(addedPlayer, x, y);
-			addedPlayer++;
-		} else if(entityName == "Present") {
+		} else if(entityName == "Player3" && Reg.playerCount > addedPlayer) createPlayer(addedPlayer++, x, y);
+		else if(entityName == "Player4" && Reg.playerCount > addedPlayer) createPlayer(addedPlayer++, x, y); 
+		else if(entityName == "Present") {
 			var pres:Present = new Present(x, y);
 			presents.add(pres);
 			if(Reg.playerCount == 1) enemy.present = pres;
@@ -185,18 +199,6 @@ class PlayState extends FlxState
 			endZones.add(new EndZone(1, x, y));
 		}
 
-	}
-
-	private function playerOnIce(TILE:FlxObject, ENTITY:FlxObject):Void
-	{
-		var player:Entity = cast ENTITY;
-		player.onIce = true;
-	}
-
-	private function snowBallWallCollide(TILE:FlxObject, SNOWBALL:FlxObject):Void
-	{
-		var snowBall:Snowball = cast SNOWBALL;
-		snowBall.kill();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -221,18 +223,15 @@ class PlayState extends FlxState
 
 		FlxG.overlap(endZones, presents, presentInEndZone);
 	}
-
 	private function snowBallHitsPlayer(player:Entity, snowBall:Snowball):Void 
 	{
 		snowBall.kill();
 		player.hit();
 	}
-
 	private function playerTouchPresent(player:Entity, present:Present):Void
 	{
 		player.playerTouchesPresent(present);
 	}
-
 	private function presentInEndZone(endZone:EndZone, present:Present):Void
 	{
 		if(present.player == null && !Reg.gameOver) {
