@@ -91,20 +91,21 @@ class KI extends Entity
     override public function update(elapsed:Float):Void
     {
         // this.path.cancel();
-        // if(freeze > 0) warmUp();
-        // if(!isFreezed) {
-        //     if(snowBallCount < 1 && !player.isFreezed) makeSnowBall();
-        //     if(!makingSnowball) {
-        //         if(touchingPresent != null) pickUpPresent();
-        //         movement();
-        //         if(getVectorLength(new FlxPoint(Math.abs(player.x - this.x), Math.abs(player.y - this.y))) < 300 && !player.isFreezed)
-        //              throwSnowBall(new FlxPoint(player.x - this.x, player.y - this.y), 600);
-        //     }
-        // }
+        
+        if(freeze > 0) warmUp();
+        if(!isFreezed) {
+            if(snowBallCount < 1 && !player.isFreezed) makeSnowBall();
+            if(!makingSnowball) {
+                if(touchingPresent != null) pickUpPresent();
+                movement();
+                if(getVectorLength(new FlxPoint(Math.abs(player.x - this.x), Math.abs(player.y - this.y))) < 300 && !player.isFreezed)
+                     throwSnowBall(new FlxPoint(player.x - this.x, player.y - this.y), 600);
+            }
+        }
 
-        // touchingPresent = null;
-        // onIce = false;
-        // super.update(elapsed);
+        touchingPresent = null;
+        onIce = false;
+        super.update(elapsed);
     }
 
     var pathPoints:Array<FlxPoint>;
