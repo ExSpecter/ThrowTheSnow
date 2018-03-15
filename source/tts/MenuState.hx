@@ -135,7 +135,7 @@ class MenuState extends FlxState
 					startGame = true;
 			} else if(gp.justReleased.A) {				
 				if(!controllerIsAlreadyConnected(gp)) {
-					addControllerPlayer();
+					addControllerPlayer(gp);
 					break;
 				}
 			} else if(gp.justReleased.X) {
@@ -162,7 +162,7 @@ class MenuState extends FlxState
 		FlxG.camera.flash(0xffffffff, 0.4);
 	}
 
-	private function addControllerPlayer():Void
+	private function addControllerPlayer(gp:FlxGamepad):Void
 	{
 		Reg.c[Reg.playerCount++] = new Controller(gp);
 		infoPlayer.text = "Player " + (Reg.playerCount + 1) + " Press A";
