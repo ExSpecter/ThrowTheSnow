@@ -16,10 +16,23 @@ class GameOver extends FlxSubState
 	public function new (team:Int) 
 	{
 		super();
+		addOverlay();
+
+		addWinnerText();
+
+		addInformationText();
+		
+		addControllers();
+	}
+
+	private function addOverlay():Void 
+	{
 		var overlay:FlxSprite = new FlxSprite();
 		overlay.makeGraphic(FlxG.width, FlxG.height, 0x44000000);
 		add(overlay);
-
+	}
+	private function addWinnerText():Void
+	{
 		var title:FlxText = new FlxText(32, (FlxG.height / 2) - 200, FlxG.width);
 		title.setFormat(null, 56, 0xe24a4a, FlxTextAlign.CENTER);
 
@@ -30,9 +43,12 @@ class GameOver extends FlxSubState
 			Reg.pointsT2++;
             title.text = "Team 2 hat gewonnen";
         }
+
 		FlxTween.tween(title.scale, { x:1.2, y:1.2 }, 2, { type:FlxTween.PINGPONG } );
 		add(title);
-
+	}
+	private function addInformationText():Void
+	{
 		var infoP1:FlxText = new FlxText(16, title.y + title.height + 100, FlxG.width);
 		infoP1.setFormat(null, 24, 0xFFFFFF, FlxTextAlign.CENTER);
 		infoP1.text = "Press Start to Play Again";
@@ -42,8 +58,10 @@ class GameOver extends FlxSubState
 		infoP2.setFormat(null, 24, 0xFFFFFF, FlxTextAlign.CENTER);
 		infoP2.text = "Press Back to Play Again with other Teams";
 		add(infoP2);
-		
-        for(input in Reg.c) {
+	}
+	private function addControllers():Void
+	{
+		 for(input in Reg.c) {
 			input.exists = true;
             add(input);
         }
