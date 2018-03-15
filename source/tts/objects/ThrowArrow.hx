@@ -70,12 +70,11 @@ class ThrowArrow extends FlxSprite
         drawLine(startX, startY, endX, endY, lineStyle, drawStyle);
     }
 
+    private var lineColor:FlxColor = new FlxColor(0);
     private function computeLineColor():FlxColor
-    {
-
-        var retval:FlxColor = new FlxColor(0);
-        retval.setRGBFloat(1 - (throwSpeed / (PlayerReg.maxThrowSpeed + 100)), throwSpeed / (PlayerReg.maxThrowSpeed + 100), 0);
-        return retval;
+    {   
+        lineColor.setRGBFloat(1 - (throwSpeed / (PlayerReg.maxThrowSpeed + 100)), throwSpeed / (PlayerReg.maxThrowSpeed + 100), 0);
+        return lineColor;
     }
 
     private function getVectorLength(vector:FlxPoint):Float
