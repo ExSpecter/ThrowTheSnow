@@ -36,7 +36,13 @@ class Player extends Entity
         offset.set(7, 16);
         
         animation.finishCallback = animationCallBack;
+        addAnimations();
 
+        throwArrow = new ThrowArrow(input, this);
+        hud.add(throwArrow);
+    }
+    private function addAnimations():Void
+    {
         animation.add("idleD", [0], 1, false);
         animation.add("d", [1,3,2,3], 6, false);
 
@@ -70,9 +76,6 @@ class Player extends Entity
 
         animation.add("pIdleL", [36], 1, false);
         animation.add("pL", [37, 36, 38, 36], 6, false);
-
-        throwArrow = new ThrowArrow(input, this);
-        hud.add(throwArrow);
     }
 
     override public function update(elapsed:Float):Void
@@ -85,7 +88,7 @@ class Player extends Entity
             if(!makingSnowball) {
                 if(input.buttonTakePresent) pickUpPresent();
                 movement();
-                if((input.buttonThrow) && input.aiming) pThrowSnowBall(input.getThrowDir(this.getPosition()));
+                if((input.buttonThrow) && input.aiming) throwSnowBall(input.getThrowDir(this.getPosition()));
             }
         }
         
@@ -172,9 +175,9 @@ class Player extends Entity
         }
     }
 
-    function pThrowSnowBall(throwDir:FlxPoint):Void
+    override function throwSnowBall(throwDir:FlxPoint):Void
     {
-        throwSnowBall(throwDir, throwArrow.throwSpeed);
+        super.throwSnowBall(throwDir, throwArrow.throwSpeed);
         throwArrow.throwSpeed = PlayerReg.minThrowSpeed;
     }
 }
