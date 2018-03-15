@@ -78,6 +78,8 @@ class Player extends Entity
     override public function update(elapsed:Float):Void
     {
         if(freeze > 0) warmUp();
+        if(pickupCooldown > 0) pickupCooldown--;
+        
         if(!isFreezed) {
             if(input.buttonMakeSnowball) makeSnowBall();
             if(!makingSnowball) {

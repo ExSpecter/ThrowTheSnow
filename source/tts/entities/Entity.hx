@@ -101,9 +101,10 @@ class Entity extends FlxSprite
         }
     }
 
+    private var pickupCooldown:Int = 0;
     private function pickUpPresent():Void
     {
-        if(!hasPresent && touchingPresent != null && touchingPresent.player == null) {
+        if(canPickupPresent()) {
             hasPresent = true;
             touchingPresent.player = this;
             carryingPresent = touchingPresent;
@@ -116,8 +117,14 @@ class Entity extends FlxSprite
             carryingPresent = null;
             isIdle = false;
 
+            pickupCooldown = PlayerReg.pickupDelayAfterDrop;
+
             animation.play("idleD");
         }
+    }
+    private inline function canPickupPresent():Bool
+    {
+        return !hasPresent && touchingPresent != null && touchingPresent.player == null && pickupCooldown == 0;
     }
 
     // Passive Actions

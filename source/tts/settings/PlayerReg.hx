@@ -15,4 +15,6 @@ class PlayerReg {
     public static inline var maxSnowball:Int = 3;
     public static inline var minThrowSpeed:Int = 400;
     public static inline var maxThrowSpeed:Int = 800;
+
+    public static inline var pickupDelayAfterDrop:Int = 20;
 }
