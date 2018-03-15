@@ -171,8 +171,12 @@ class Entity extends FlxSprite
         }
 
         if(freeze > 0) {
-            this.color.setRGBFloat(PlayerReg.freezeColorR + (PlayerReg.freezeLimit - freeze), PlayerReg.freezeColorG + ((PlayerReg.freezeLimit - freeze)), 255);
+            this.color.setRGBFloat(calcFreezeColor(PlayerReg.freezeColorR), calcFreezeColor(PlayerReg.freezeColorG), 255);
         } else this.color.setRGBFloat(255, 255, 255);
+    }
+    private inline function calcFreezeColor(color:Float):Float
+    {
+        return color + (PlayerReg.freezeLimit - freeze);
     }
 
     public function playerTouchesPresent(present:Present):Void
