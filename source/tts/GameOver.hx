@@ -18,7 +18,7 @@ class GameOver extends FlxSubState
 		super();
 		addOverlay();
 
-		addWinnerText();
+		addWinnerText(team);
 
 		addInformationText();
 		
@@ -31,9 +31,10 @@ class GameOver extends FlxSubState
 		overlay.makeGraphic(FlxG.width, FlxG.height, 0x44000000);
 		add(overlay);
 	}
-	private function addWinnerText():Void
+	private var textHeightReferencePoint:Float = (FlxG.height / 2) - 200;
+	private function addWinnerText(team:Int):Void
 	{
-		var title:FlxText = new FlxText(32, (FlxG.height / 2) - 200, FlxG.width);
+		var title:FlxText = new FlxText(32, textHeightReferencePoint, FlxG.width);
 		title.setFormat(null, 56, 0xe24a4a, FlxTextAlign.CENTER);
 
         if(team == 0) {
@@ -49,12 +50,12 @@ class GameOver extends FlxSubState
 	}
 	private function addInformationText():Void
 	{
-		var infoP1:FlxText = new FlxText(16, title.y + title.height + 100, FlxG.width);
+		var infoP1:FlxText = new FlxText(16, textHeightReferencePoint + 120, FlxG.width);
 		infoP1.setFormat(null, 24, 0xFFFFFF, FlxTextAlign.CENTER);
 		infoP1.text = "Press Start to Play Again";
 		add(infoP1);
 
-		var infoP2:FlxText = new FlxText(16, title.y + title.height + 200, FlxG.width);
+		var infoP2:FlxText = new FlxText(16, textHeightReferencePoint + 220, FlxG.width);
 		infoP2.setFormat(null, 24, 0xFFFFFF, FlxTextAlign.CENTER);
 		infoP2.text = "Press Back to Play Again with other Teams";
 		add(infoP2);
